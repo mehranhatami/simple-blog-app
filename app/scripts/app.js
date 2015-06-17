@@ -1,34 +1,34 @@
-define([
-  'models/posts',
-  'views/postsListView',
-  'views/postListView',
-  'routers/postRouter'
-], function () {
+var Posts = require('./models/posts'),
+  PostsListView = require('./views/postsListView'),
+  PostListView = require('./views/postListView'),
+  PostRouter = require('./routers/postRouter'),
+  blog = window.blog,
+  Backbone = window.Backbone;
 
-  var app = {
-    lunch: function () {
+var app = {
+  lunch: function () {
 
-      blog.posts = new blog.models.Posts(blog.data);
+    var posts = new Posts(blog.data);
 
-      blog.postRouter = new blog.routers.PostRouter({
-        posts: blog.posts,
-        main: $("#main")
-      });
+    var postRouter = PostRouter({
+      posts: posts,
+      main: $("#main")
+    });
 
-      Backbone.history.start({
-        pushState: true
-      });
+    // expose the router instance to the global world!
+    // blog.postRouter = postRouter;
 
-    },
-    _lunch: function(){
-      
-      $("#main").append(new blog.views.PostsListView({
-        collection: new blog.models.Posts(blog.data)
-      }).render().el);
+    Backbone.history.start({
+      pushState: true
+    });
+  },
+  _lunch: function () {
 
-    }
-  };
+    $("#main").append(new PostsListView({
+      collection: new Posts(blog.data)
+    }).render().el);
 
-  return app;
+  }
+};
 
-});
+module.exports = app;

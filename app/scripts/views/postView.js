@@ -1,10 +1,12 @@
-define([
-  'views/commentsView'
-], function (CommentsView) {
+var
+  Backbone = window.Backbone,
+  Handlebars = window.Handlebars,
+  blog = window.blog,
+  CommentsView = require('./commentsView'),
+  PostRouter = require('../routers/postRouter'),
+  PostView = Backbone.View.extend({
 
-  blog.views.PostView = Backbone.View.extend({
-    
-    template: Handlebars.compile($("#postView").html()),
+    template: Handlebars.compile($('#postView').html()),
 
     events: {
       'click a': 'handleClick'
@@ -20,7 +22,7 @@ define([
       var commentsView = new CommentsView({
         post: post
       });
-      
+
       this.$el.find('>.comments').html(commentsView.render().el);
 
       return this;
@@ -28,12 +30,11 @@ define([
 
     handleClick: function (e) {
       e.preventDefault();
-      blog.postRouter.navigate($(e.currentTarget).attr("href"), {
+      PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
         trigger: true
       });
       return false;
     }
   });
 
-  return blog.views.PostView;
-});
+module.exports = PostView;

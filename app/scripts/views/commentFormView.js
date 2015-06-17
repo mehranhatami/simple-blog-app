@@ -1,13 +1,14 @@
-define(function () {
-
-  blog.views.CommentFormView = Backbone.View.extend({
-    tagName: "form",
+var
+  Backbone = window.Backbone,
+  Handlebars = window.Handlebars,
+  CommentFormView = Backbone.View.extend({
+    tagName: 'form',
 
     initialize: function (options) {
       this.post = options.post;
     },
 
-    template: Handlebars.compile($("#commentFormView").html()),
+    template: Handlebars.compile($('#commentFormView').html()),
 
     events: {
       'click button': 'submitComment'
@@ -19,10 +20,10 @@ define(function () {
     },
 
     submitComment: function (e) {
-      var name = this.$("#cmtName").val();
-      var text = this.$("#cmtText").val();
+      var name = this.$('#cmtName').val();
+      var text = this.$('#cmtText').val();
       var commentAttrs = {
-        postId: this.post.get("postId"),
+        postId: this.post.get('postId'),
         name: name,
         text: text,
         date: new Date()
@@ -37,6 +38,4 @@ define(function () {
 
   });
 
-  return blog.views.CommentFormView;
-
-});
+module.exports = CommentFormView;

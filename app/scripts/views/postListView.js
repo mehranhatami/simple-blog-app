@@ -1,6 +1,8 @@
-define(function () {
-
-  blog.views.PostListView = Backbone.View.extend({
+var
+  Backbone = window.Backbone,
+  Handlebars = window.Handlebars,
+  //PostRouter = require('../routers/postRouter'),
+  PostListView = Backbone.View.extend({
     tagName: 'li',
 
     // events: {
@@ -15,16 +17,14 @@ define(function () {
     }
 
     // handleClick: function (e) {
-      
+
     //   e.preventDefault();
 
-    //   blog.postRouter.navigate($(e.currentTarget).attr("href"), {
+    //   PostRouter.instance.navigate($(e.currentTarget).attr("href"), {
     //     trigger: true
     //   });
 
     // }
   });
 
-  return blog.views.PostListView;
-
-});
+module.exports = PostListView;

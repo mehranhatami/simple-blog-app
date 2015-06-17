@@ -1,9 +1,7 @@
-require.config({
-  baseUrl: "/scripts"
-});
+// require.config({
+//   baseUrl: "/scripts"
+// });
 
-require([
-  "app"
-], function (app) {
-  $(app.lunch);
-});
+var app = require('./app');
+
+$(app.lunch);

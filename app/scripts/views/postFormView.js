@@ -1,16 +1,21 @@
-define(function () {
-
-  blog.views.PostFormView = Backbone.View.extend({
+var
+  Backbone = window.Backbone,
+  Handlebars = window.Handlebars,
+  blog = window.blog,
+  Post = require('../models/post'),
+  PostRouter = require('../routers/postRouter'),
+  PostFormView = Backbone.View.extend({
     tagName: 'form',
 
-    template: Handlebars.compile($("#postFormView").html()),
+    template: Handlebars.compile($('#postFormView').html()),
 
     initialize: function (options) {
       this.posts = options.posts;
     },
 
     events: {
-      'click button': 'createPost'
+      'click button': 'createPost',
+      'click a': 'handleClick'
     },
 
     render: function () {
@@ -21,25 +26,29 @@ define(function () {
     createPost: function () {
       var postAttrs = {
         postId: this.posts.length,
-        content: $("#postText").val(),
-        title: $("#postTitle").val(),
+        content: $('#postText').val(),
+        title: $('#postTitle').val(),
         pubDate: new Date()
       };
 
-      var post = new blog.models.Post(postAttrs);
+      var post = new Post(postAttrs);
       //this.posts.add(post);
       //post.save();
 
       this.posts.create(postAttrs);
 
-      blog.postRouter.navigate("/", {
+      PostRouter.instance.navigate('/', {
         trigger: true
       });
 
       return false;
+    },
+    handleClick: function (e) {
+      e.preventDefault();
+      PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
+        trigger: true
+      });
     }
   });
 
-  return blog.views.PostFormView;
-
-});
+module.exports = PostFormView;

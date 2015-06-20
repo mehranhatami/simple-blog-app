@@ -21,14 +21,14 @@ var app = {
     Backbone.history.start({
       pushState: true
     });
-  },
-  _lunch: function () {
-
-    $("#main").append(new PostsListView({
-      collection: new Posts(blog.data)
-    }).render().el);
-
   }
+  // _lunch: function () {
+
+  //   $("#main").append(new PostsListView({
+  //     collection: new Posts(blog.data)
+  //   }).render().el);
+
+  // }
 };
 
 module.exports = app;

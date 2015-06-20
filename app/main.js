@@ -22,14 +22,14 @@ var app = {
     Backbone.history.start({
       pushState: true
     });
+  },
+  _lunch: function () {
+
+    $("#main").append(new PostsListView({
+      collection: new Posts(blog.data)
+    }).render().el);
+
   }
-  // _lunch: function () {
-
-  //   $("#main").append(new PostsListView({
-  //     collection: new Posts(blog.data)
-  //   }).render().el);
-
-  // }
 };
 
 module.exports = app;
@@ -96,7 +96,7 @@ var
   PostFormView = require('../views/postFormView'),
   CommentsView = require('../views/commentsView'),
   blog = window.blog;
-
+debugger;
 var PostRouter = Backbone.Router.extend({
   initialize: function (options) {
     this.posts = options.posts;
@@ -386,8 +386,7 @@ var
 
 module.exports = PostView;
 },{"../routers/postRouter":7,"./commentsView":10}],14:[function(require,module,exports){
-var
-  Backbone = window.Backbone,
+var Backbone = window.Backbone,
   Handlebars = window.Handlebars,
   blog = window.blog,
   PostListView = require('./postListView'),
@@ -414,6 +413,6 @@ var
       });
     }
   });
-
+debugger;
 module.exports = PostsListView;
 },{"../routers/postRouter":7,"./postListView":12}]},{},[2,1,3,4,5,6,7,8,9,10,11,12,13,14]);

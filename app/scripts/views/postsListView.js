@@ -1,5 +1,4 @@
-var
-  Backbone = window.Backbone,
+var Backbone = window.Backbone,
   Handlebars = window.Handlebars,
   blog = window.blog,
   PostListView = require('./postListView'),

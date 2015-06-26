@@ -1,9 +1,11 @@
 define([
   'views/commentsView'
 ], function (CommentsView) {
+  var Backbone = window.Backbone,
+    Handlebars = window.Handlebars;
 
-  blog.views.PostView = Backbone.View.extend({
-    
+  return Backbone.View.extend({
+
     template: Handlebars.compile($("#postView").html()),
 
     events: {
@@ -20,20 +22,19 @@ define([
       var commentsView = new CommentsView({
         post: post
       });
-      
+
       this.$el.find('>.comments').html(commentsView.render().el);
 
       return this;
     },
 
     handleClick: function (e) {
+      var PostRouter = window.PostRouter;
       e.preventDefault();
-      blog.postRouter.navigate($(e.currentTarget).attr("href"), {
+      PostRouter.instance.navigate($(e.currentTarget).attr("href"), {
         trigger: true
       });
       return false;
     }
   });
-
-  return blog.views.PostView;
 });

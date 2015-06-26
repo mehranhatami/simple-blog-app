@@ -1,6 +1,10 @@
-define(function () {
+define([
+  'models/post'
+], function (Post) {
+  var Backbone = window.Backbone,
+    Handlebars = window.Handlebars;
 
-  blog.views.PostFormView = Backbone.View.extend({
+  return Backbone.View.extend({
     tagName: 'form',
 
     template: Handlebars.compile($("#postFormView").html()),
@@ -20,26 +24,24 @@ define(function () {
 
     createPost: function () {
       var postAttrs = {
-        postId: this.posts.length,
-        content: $("#postText").val(),
-        title: $("#postTitle").val(),
-        pubDate: new Date()
-      };
+          postId: this.posts.length,
+          content: $("#postText").val(),
+          title: $("#postTitle").val(),
+          pubDate: new Date()
+        },
+        post = new Post(postAttrs),
+        PostRouter = window.PostRouter;
 
-      var post = new blog.models.Post(postAttrs);
       //this.posts.add(post);
       //post.save();
 
       this.posts.create(postAttrs);
 
-      blog.postRouter.navigate("/", {
+      PostRouter.instance.navigate('/', {
         trigger: true
       });
 
       return false;
     }
   });
-
-  return blog.views.PostFormView;
-
 });

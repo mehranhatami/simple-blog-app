@@ -2,8 +2,9 @@ define([
   'views/commentView',
   'views/commentFormView'
 ], function (CommentView, CommentFormView) {
+  var Backbone = window.Backbone;
 
-  blog.views.CommentsView = Backbone.View.extend({
+  return Backbone.View.extend({
     initialize: function (options) {
       this.post = options.post;
       this.post.comments.on('add', this.renderComment, this);
@@ -29,6 +30,4 @@ define([
       return this;
     }
   });
-
-  return blog.views.CommentsView;
 });

@@ -1,6 +1,8 @@
 define(function () {
-
-  blog.views.CommentView = Backbone.View.extend({
+  var Backbone = window.Backbone,
+    Handlebars = window.Handlebars;
+    
+  return Backbone.View.extend({
     
     template: Handlebars.compile($("#commentView").html()),
     
@@ -14,6 +16,4 @@ define(function () {
       return this;
     }
   });
-
-  return blog.views.CommentView;
 });

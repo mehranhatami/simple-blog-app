@@ -1,11 +1,10 @@
-define(function () {
-  
-  blog.models.Comment = Backbone.Model.extend({
-    idAttribute: 'commentId',
-    // urlRoot: "/posts"
-  });
+define([
+  'models/comment'
+], function (Comment) {
+  var Backbone = window.Backbone;
 
-  blog.models.Comments = Backbone.Collection.extend({
+  return Backbone.Collection.extend({
+    model: Comment,
     initialize: function (models, options) {
       this.post = options.post;
     },
@@ -13,6 +12,4 @@ define(function () {
       return this.post.url() + "/comments";
     }
   });
-
-  return blog.models.Comments;
 });

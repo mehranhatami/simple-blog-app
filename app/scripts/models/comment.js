@@ -1,7 +1,6 @@
 var
-  Backbone = window.Backbone,
-  Comment = Backbone.Model.extend({
-    idAttribute: 'commentId'
-  });
+  Backbone = window.Backbone;
 
-module.exports = Comment;
+module.exports = Backbone.Model.extend({
+  idAttribute: 'commentId'
+});

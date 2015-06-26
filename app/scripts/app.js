@@ -1,33 +1,36 @@
-var Posts = require('./models/posts'),
+var
+  Backbone = window.Backbone,
+  Posts = require('./models/posts'),
   PostsListView = require('./views/postsListView'),
   PostListView = require('./views/postListView'),
-  PostRouter = require('./routers/postRouter'),
-  blog = window.blog,
-  Backbone = window.Backbone;
+  PostRouter = require('./routers/postRouter');
 
 var app = {
   lunch: function () {
-
-    var posts = new Posts(blog.data);
-
-    var postRouter = PostRouter({
-      posts: posts,
-      main: $("#main")
-    });
-
-    // expose the router instance to the global world!
-    // blog.postRouter = postRouter;
+    $.getJSON('/posts')
+      .then(app.load)
+      .fail(function (error) {
+        console.error('Something wrong with the database!', error);
+      });
+  },
+  load: function (data) {
+    var posts = new Posts(data),
+      postRouter = PostRouter({
+        posts: posts,
+        main: $("#main")
+      });
 
     Backbone.history.start({
       pushState: true
     });
-  },
-  _lunch: function () {
 
-    $("#main").append(new PostsListView({
-      collection: new Posts(blog.data)
-    }).render().el);
-
+    // Getting ride of handleClick
+    // $("#main").on('click', 'a', function (e) {
+    //   e.preventDefault();
+    //   postRouter.navigate($(e.currentTarget).attr('href'), {
+    //     trigger: true
+    //   });
+    // });
   }
 };
 

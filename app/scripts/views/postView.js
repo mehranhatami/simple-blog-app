@@ -1,40 +1,38 @@
 var
   Backbone = window.Backbone,
   Handlebars = window.Handlebars,
-  blog = window.blog,
-  CommentsView = require('./commentsView'),
-  PostRouter = require('../routers/postRouter'),
-  PostView = Backbone.View.extend({
+  CommentsView = require('./commentsView');
 
-    template: Handlebars.compile($('#postView').html()),
+module.exports = Backbone.View.extend({
 
-    events: {
-      'click a': 'handleClick'
-    },
+  template: Handlebars.compile($('#postView').html()),
 
-    render: function () {
-      var post = this.model,
-        model = post.toJSON();
+  events: {
+    'click a': 'handleClick'
+  },
 
-      model.pubDate = new Date(Date.parse(model.pubDate)).toDateString();
-      this.el.innerHTML = this.template(model);
+  render: function () {
+    var post = this.model,
+      model = post.toJSON();
 
-      var commentsView = new CommentsView({
-        post: post
-      });
+    model.pubDate = new Date(Date.parse(model.pubDate)).toDateString();
+    this.el.innerHTML = this.template(model);
 
-      this.$el.find('>.comments').html(commentsView.render().el);
+    var commentsView = new CommentsView({
+      post: post
+    });
 
-      return this;
-    },
+    this.$el.find('>.comments').html(commentsView.render().el);
 
-    handleClick: function (e) {
-      e.preventDefault();
-      PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
-        trigger: true
-      });
-      return false;
-    }
-  });
+    return this;
+  },
 
-module.exports = PostView;
+  handleClick: function (e) {
+    var PostRouter = require('../routers/postRouter');
+    e.preventDefault();
+    PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
+      trigger: true
+    });
+    return false;
+  }
+});

@@ -1,41 +1,40 @@
 var
   Backbone = window.Backbone,
-  Handlebars = window.Handlebars,
-  CommentFormView = Backbone.View.extend({
-    tagName: 'form',
+  Handlebars = window.Handlebars;
 
-    initialize: function (options) {
-      this.post = options.post;
-    },
+module.exports = Backbone.View.extend({
+  tagName: 'form',
 
-    template: Handlebars.compile($('#commentFormView').html()),
+  initialize: function (options) {
+    this.post = options.post;
+  },
 
-    events: {
-      'click button': 'submitComment'
-    },
+  template: Handlebars.compile($('#commentFormView').html()),
 
-    render: function () {
-      this.el.innerHTML = this.template();
-      return this;
-    },
+  events: {
+    'click button': 'submitComment'
+  },
 
-    submitComment: function (e) {
-      var name = this.$('#cmtName').val();
-      var text = this.$('#cmtText').val();
-      var commentAttrs = {
+  render: function () {
+    this.el.innerHTML = this.template();
+    return this;
+  },
+
+  submitComment: function (e) {
+    var name = this.$('#cmtName').val(),
+      text = this.$('#cmtText').val(),
+      commentAttrs = {
         postId: this.post.get('postId'),
         name: name,
         text: text,
         date: new Date()
       };
 
-      this.post.comments.create(commentAttrs);
-      this.el.reset();
+    this.post.comments.create(commentAttrs);
+    this.el.reset();
 
-      e.preventDefault();
-      return false;
-    }
+    e.preventDefault();
+    return false;
+  }
 
-  });
-
-module.exports = CommentFormView;
+});

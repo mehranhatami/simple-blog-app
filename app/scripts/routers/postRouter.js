@@ -1,11 +1,9 @@
 var
   Backbone = window.Backbone,
-  PostsListView = require('../views/postsListView'),
   PostView = require('../views/postView'),
   PostFormView = require('../views/postFormView'),
-  CommentsView = require('../views/commentsView'),
-  blog = window.blog;
-debugger;
+  CommentsView = require('../views/commentsView');
+
 var PostRouter = Backbone.Router.extend({
   initialize: function (options) {
     this.posts = options.posts;
@@ -17,15 +15,13 @@ var PostRouter = Backbone.Router.extend({
     'posts/:id': 'singlePost'
   },
   index: function () {
+    var PostsListView = require('../views/postsListView');
 
     this.postsListView = new PostsListView({
       collection: this.posts
     });
 
     this.main.html(this.postsListView.render().el);
-
-    // global shortcut
-    blog.currentView = this.postsListView;
   },
   singlePost: function (id) {
     var post = this.posts.get(id);
@@ -35,31 +31,12 @@ var PostRouter = Backbone.Router.extend({
     });
 
     this.main.html(this.postView.render().el);
-
-    //this.singlePostComments(post);
-
-    // global shortcut
-    blog.currentView = this.postView;
-  },
-  singlePostComments: function (post) {
-
-    this.commentsView = new CommentsView({
-      post: post
-    });
-
-    this.comments.html(this.commentsView.render().el);
-
-    // global shortcut
-    blog.commentsView = this.commentsView;
   },
   newPost: function () {
     this.postFormView = new PostFormView({
       posts: this.posts
     });
     this.main.html(this.postFormView.render().el);
-
-    // global shortcut
-    blog.currentView = this.postFormView;
   }
 });
 

@@ -21,11 +21,7 @@ module.exports = function (grunt) {
       dist: {
         files: {
           'app/main.js': [
-            'app/scripts/main.js',
-            'app/scripts/app.js',
-            'app/scripts/models/*.js',
-            'app/scripts/routers/*.js',
-            'app/scripts/views/*.js'
+            'app/scripts/main.js'
           ],
         },
         options: {}
@@ -34,7 +30,7 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-browserify');
-  
+
   grunt.registerTask('default', [
     'browserify:dist'
   ]);

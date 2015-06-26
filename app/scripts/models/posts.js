@@ -1,9 +1,8 @@
 var
   Backbone = window.Backbone,
-  Post = require('./post'),
-  Posts = Backbone.Collection.extend({
-    model: Post,
-    url: '/posts'
-  });
+  Post = require('./post');
 
-module.exports = Posts;
+module.exports = Backbone.Collection.extend({
+  model: Post,
+  url: '/posts'
+});

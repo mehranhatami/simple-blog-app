@@ -1,30 +1,27 @@
 var
   Backbone = window.Backbone,
-  Handlebars = window.Handlebars,
-  //PostRouter = require('../routers/postRouter'),
-  PostListView = Backbone.View.extend({
-    tagName: 'li',
+  Handlebars = window.Handlebars;
 
-    // events: {
-    //   'click a': 'handleClick'
-    // },
+module.exports = Backbone.View.extend({
+  tagName: 'li',
 
-    template: Handlebars.compile('<a href="/posts/{{postId}}">{{title}}</a>'),
+  events: {
+    'click a': 'handleClick'
+  },
 
-    render: function () {
-      this.el.innerHTML = this.template(this.model.toJSON());
-      return this;
-    }
+  template: Handlebars.compile('<a href="/posts/{{postId}}">{{title}}</a>'),
 
-    // handleClick: function (e) {
+  render: function () {
+    this.el.innerHTML = this.template(this.model.toJSON());
+    return this;
+  },
 
-    //   e.preventDefault();
+  handleClick: function (e) {
+    var PostRouter = require('../routers/postRouter');
+    e.preventDefault();
 
-    //   PostRouter.instance.navigate($(e.currentTarget).attr("href"), {
-    //     trigger: true
-    //   });
-
-    // }
-  });
-
-module.exports = PostListView;
+    PostRouter.instance.navigate($(e.currentTarget).attr("href"), {
+      trigger: true
+    });
+  }
+});

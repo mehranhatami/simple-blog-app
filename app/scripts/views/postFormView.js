@@ -1,54 +1,59 @@
 var
   Backbone = window.Backbone,
   Handlebars = window.Handlebars,
-  blog = window.blog,
-  Post = require('../models/post'),
-  PostRouter = require('../routers/postRouter'),
-  PostFormView = Backbone.View.extend({
-    tagName: 'form',
+  Post = require('../models/post');
 
-    template: Handlebars.compile($('#postFormView').html()),
+module.exports = Backbone.View.extend({
+  tagName: 'form',
 
-    initialize: function (options) {
-      this.posts = options.posts;
-    },
+  template: Handlebars.compile($('#postFormView').html()),
 
-    events: {
-      'click button': 'createPost',
-      'click a': 'handleClick'
-    },
+  initialize: function (options) {
+    this.posts = options.posts;
+  },
 
-    render: function () {
-      this.el.innerHTML = this.template();
-      return this;
-    },
+  events: {
+    'click button': 'createPost',
+    'click a': 'handleClick'
+  },
 
-    createPost: function () {
-      var postAttrs = {
+  render: function () {
+    this.el.innerHTML = this.template();
+    return this;
+  },
+
+  router: null,
+  navigate: function (url, options) {
+    if (!this.router) {
+      this.router = require('../routers/postRouter');
+    }
+    this.router.instance.navigate(url, options);
+  },
+
+  createPost: function () {
+    var postAttrs = {
         postId: this.posts.length,
         content: $('#postText').val(),
         title: $('#postTitle').val(),
         pubDate: new Date()
-      };
+      },
+      post = new Post(postAttrs);
 
-      var post = new Post(postAttrs);
-      //this.posts.add(post);
-      //post.save();
+    //this.posts.add(post);
+    //post.save();
 
-      this.posts.create(postAttrs);
+    this.posts.create(postAttrs);
 
-      PostRouter.instance.navigate('/', {
-        trigger: true
-      });
+    this.navigate('/', {
+      trigger: true
+    });
 
-      return false;
-    },
-    handleClick: function (e) {
-      e.preventDefault();
-      PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
-        trigger: true
-      });
-    }
-  });
-
-module.exports = PostFormView;
+    return false;
+  },
+  handleClick: function (e) {
+    e.preventDefault();
+    this.navigate($(e.currentTarget).attr('href'), {
+      trigger: true
+    });
+  }
+});

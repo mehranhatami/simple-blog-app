@@ -1,102 +1,93 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Posts = require('./models/posts'),
+var
+  Backbone = window.Backbone,
+  Posts = require('./models/posts'),
   PostsListView = require('./views/postsListView'),
   PostListView = require('./views/postListView'),
-  PostRouter = require('./routers/postRouter'),
-  blog = window.blog,
-  Backbone = window.Backbone;
+  PostRouter = require('./routers/postRouter');
 
 var app = {
   lunch: function () {
-
-    var posts = new Posts(blog.data);
-
-    var postRouter = PostRouter({
-      posts: posts,
-      main: $("#main")
-    });
-
-    // expose the router instance to the global world!
-    // blog.postRouter = postRouter;
+    $.getJSON('/posts')
+      .then(app.load)
+      .fail(function (error) {
+        console.error('Something wrong with the database!', error);
+      });
+  },
+  load: function (data) {
+    var posts = new Posts(data),
+      postRouter = PostRouter({
+        posts: posts,
+        main: $("#main")
+      });
 
     Backbone.history.start({
       pushState: true
     });
-  },
-  _lunch: function () {
 
-    $("#main").append(new PostsListView({
-      collection: new Posts(blog.data)
-    }).render().el);
-
+    // Getting ride of handleClick
+    // $("#main").on('click', 'a', function (e) {
+    //   e.preventDefault();
+    //   postRouter.navigate($(e.currentTarget).attr('href'), {
+    //     trigger: true
+    //   });
+    // });
   }
 };
 
 module.exports = app;
 },{"./models/posts":6,"./routers/postRouter":7,"./views/postListView":12,"./views/postsListView":14}],2:[function(require,module,exports){
-// require.config({
-//   baseUrl: "/scripts"
-// });
-
-var app = require('./app');
-
-$(app.lunch);
+$(require('./app').lunch);
 },{"./app":1}],3:[function(require,module,exports){
 var
-  Backbone = window.Backbone,
-  Comment = Backbone.Model.extend({
-    idAttribute: 'commentId'
-  });
+  Backbone = window.Backbone;
 
-module.exports = Comment;
+module.exports = Backbone.Model.extend({
+  idAttribute: 'commentId'
+});
 },{}],4:[function(require,module,exports){
 var
   Backbone = window.Backbone,
-  Comment = require('./comment'),
-  Comments = Backbone.Collection.extend({
-    initialize: function (models, options) {
-      this.post = options.post;
-    },
-    url: function () {
-      return this.post.url() + '/comments';
-    }
-  });
+  Comment = require('./comment');
 
-module.exports = Comments;
+module.exports = Backbone.Collection.extend({
+  initialize: function (models, options) {
+    this.post = options.post;
+  },
+  url: function () {
+    return this.post.url() + '/comments';
+  }
+});
 },{"./comment":3}],5:[function(require,module,exports){
 var
   Backbone = window.Backbone,
-  Comments = require('./comments'),
-  Post = Backbone.Model.extend({
-    idAttribute: 'postId',
-    urlRoot: '/posts',
-    initialize: function () {
-      this.comments = new Comments([], {
-        post: this
-      });
-    }
-  });
+  Comments = require('./comments');
 
-module.exports = Post;
+module.exports = Backbone.Model.extend({
+  idAttribute: 'postId',
+  urlRoot: '/posts',
+  initialize: function () {
+    this.comments = new Comments([], {
+      post: this
+    });
+  }
+});
 },{"./comments":4}],6:[function(require,module,exports){
 var
   Backbone = window.Backbone,
-  Post = require('./post'),
-  Posts = Backbone.Collection.extend({
-    model: Post,
-    url: '/posts'
-  });
+  Post = require('./post');
 
-module.exports = Posts;
+module.exports = Backbone.Collection.extend({
+  model: Post,
+  url: '/posts'
+});
 },{"./post":5}],7:[function(require,module,exports){
 var
   Backbone = window.Backbone,
-  PostsListView = require('../views/postsListView'),
   PostView = require('../views/postView'),
   PostFormView = require('../views/postFormView'),
-  CommentsView = require('../views/commentsView'),
-  blog = window.blog;
-debugger;
+  CommentsView = require('../views/commentsView');
+
 var PostRouter = Backbone.Router.extend({
   initialize: function (options) {
     this.posts = options.posts;
@@ -108,15 +99,13 @@ var PostRouter = Backbone.Router.extend({
     'posts/:id': 'singlePost'
   },
   index: function () {
+    var PostsListView = require('../views/postsListView');
 
     this.postsListView = new PostsListView({
       collection: this.posts
     });
 
     this.main.html(this.postsListView.render().el);
-
-    // global shortcut
-    blog.currentView = this.postsListView;
   },
   singlePost: function (id) {
     var post = this.posts.get(id);
@@ -126,293 +115,269 @@ var PostRouter = Backbone.Router.extend({
     });
 
     this.main.html(this.postView.render().el);
-
-    //this.singlePostComments(post);
-
-    // global shortcut
-    blog.currentView = this.postView;
-  },
-  singlePostComments: function (post) {
-
-    this.commentsView = new CommentsView({
-      post: post
-    });
-
-    this.comments.html(this.commentsView.render().el);
-
-    // global shortcut
-    blog.commentsView = this.commentsView;
   },
   newPost: function () {
     this.postFormView = new PostFormView({
       posts: this.posts
     });
     this.main.html(this.postFormView.render().el);
-
-    // global shortcut
-    blog.currentView = this.postFormView;
   }
 });
 
-function instantiate(options) {
+module.exports = function instantiate(options) {
   var postRouter = new PostRouter(options);
 
-  // arguments.callee.postRouter = postRouter;
+  // arguments.callee.instance = postRouter;
   instantiate.instance = postRouter;
   return postRouter;
-}
-
-module.exports = instantiate;
+};
 },{"../views/commentsView":10,"../views/postFormView":11,"../views/postView":13,"../views/postsListView":14}],8:[function(require,module,exports){
 var
   Backbone = window.Backbone,
-  Handlebars = window.Handlebars,
-  CommentFormView = Backbone.View.extend({
-    tagName: 'form',
+  Handlebars = window.Handlebars;
 
-    initialize: function (options) {
-      this.post = options.post;
-    },
+module.exports = Backbone.View.extend({
+  tagName: 'form',
 
-    template: Handlebars.compile($('#commentFormView').html()),
+  initialize: function (options) {
+    this.post = options.post;
+  },
 
-    events: {
-      'click button': 'submitComment'
-    },
+  template: Handlebars.compile($('#commentFormView').html()),
 
-    render: function () {
-      this.el.innerHTML = this.template();
-      return this;
-    },
+  events: {
+    'click button': 'submitComment'
+  },
 
-    submitComment: function (e) {
-      var name = this.$('#cmtName').val();
-      var text = this.$('#cmtText').val();
-      var commentAttrs = {
+  render: function () {
+    this.el.innerHTML = this.template();
+    return this;
+  },
+
+  submitComment: function (e) {
+    var name = this.$('#cmtName').val(),
+      text = this.$('#cmtText').val(),
+      commentAttrs = {
         postId: this.post.get('postId'),
         name: name,
         text: text,
         date: new Date()
       };
 
-      this.post.comments.create(commentAttrs);
-      this.el.reset();
+    this.post.comments.create(commentAttrs);
+    this.el.reset();
 
-      e.preventDefault();
-      return false;
-    }
+    e.preventDefault();
+    return false;
+  }
 
-  });
-
-module.exports = CommentFormView;
+});
 },{}],9:[function(require,module,exports){
 var
   Backbone = window.Backbone,
-  Handlebars = window.Handlebars,
-  CommentView = Backbone.View.extend({
+  Handlebars = window.Handlebars;
 
-    template: Handlebars.compile($('#commentView').html()),
+module.exports = Backbone.View.extend({
 
-    render: function () {
-      var model = this.model.toJSON();
+  template: Handlebars.compile($('#commentView').html()),
 
-      model.date = new Date(Date.parse(model.date)).toDateString();
+  render: function () {
+    var model = this.model.toJSON();
 
-      this.el.innerHTML = this.template(model);
+    model.date = new Date(Date.parse(model.date)).toDateString();
 
-      return this;
-    }
-  });
+    this.el.innerHTML = this.template(model);
 
-module.exports = CommentView;
+    return this;
+  }
+});
 },{}],10:[function(require,module,exports){
 var
   Backbone = window.Backbone,
   CommentView = require('./commentView'),
-  CommentFormView = require('./commentFormView'),
-  CommentsView = Backbone.View.extend({
-    initialize: function (options) {
-      this.post = options.post;
-      this.post.comments.on('add', this.renderComment, this);
-    },
+  CommentFormView = require('./commentFormView');
 
-    render: function () {
-      this.$el.append('<h2> Comments </h2>');
+module.exports = Backbone.View.extend({
+  initialize: function (options) {
+    this.post = options.post;
+    this.post.comments.on('add', this.renderComment, this);
+  },
 
-      this.$el.append(new CommentFormView({
-        post: this.post
-      }).render().el);
+  render: function () {
+    this.$el.append('<h2> Comments </h2>');
 
-      this.post.comments.fetch();
+    this.$el.append(new CommentFormView({
+      post: this.post
+    }).render().el);
 
-      return this;
-    },
+    this.post.comments.fetch();
 
-    renderComment: function (comment) {
-      this.$el.append(new CommentView({
-        model: comment
-      }).render().el);
+    return this;
+  },
 
-      return this;
-    }
-  });
+  renderComment: function (comment) {
+    this.$el.append(new CommentView({
+      model: comment
+    }).render().el);
 
-module.exports = CommentsView;
+    return this;
+  }
+});
 },{"./commentFormView":8,"./commentView":9}],11:[function(require,module,exports){
 var
   Backbone = window.Backbone,
   Handlebars = window.Handlebars,
-  blog = window.blog,
-  Post = require('../models/post'),
-  PostRouter = require('../routers/postRouter'),
-  PostFormView = Backbone.View.extend({
-    tagName: 'form',
+  Post = require('../models/post');
 
-    template: Handlebars.compile($('#postFormView').html()),
+module.exports = Backbone.View.extend({
+  tagName: 'form',
 
-    initialize: function (options) {
-      this.posts = options.posts;
-    },
+  template: Handlebars.compile($('#postFormView').html()),
 
-    events: {
-      'click button': 'createPost',
-      'click a': 'handleClick'
-    },
+  initialize: function (options) {
+    this.posts = options.posts;
+  },
 
-    render: function () {
-      this.el.innerHTML = this.template();
-      return this;
-    },
+  events: {
+    'click button': 'createPost',
+    'click a': 'handleClick'
+  },
 
-    createPost: function () {
-      var postAttrs = {
+  render: function () {
+    this.el.innerHTML = this.template();
+    return this;
+  },
+
+  router: null,
+  navigate: function (url, options) {
+    if (!this.router) {
+      this.router = require('../routers/postRouter');
+    }
+    this.router.instance.navigate(url, options);
+  },
+
+  createPost: function () {
+    var postAttrs = {
         postId: this.posts.length,
         content: $('#postText').val(),
         title: $('#postTitle').val(),
         pubDate: new Date()
-      };
+      },
+      post = new Post(postAttrs);
 
-      var post = new Post(postAttrs);
-      //this.posts.add(post);
-      //post.save();
+    //this.posts.add(post);
+    //post.save();
 
-      this.posts.create(postAttrs);
+    this.posts.create(postAttrs);
 
-      PostRouter.instance.navigate('/', {
-        trigger: true
-      });
+    this.navigate('/', {
+      trigger: true
+    });
 
-      return false;
-    },
-    handleClick: function (e) {
-      e.preventDefault();
-      PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
-        trigger: true
-      });
-    }
-  });
-
-module.exports = PostFormView;
+    return false;
+  },
+  handleClick: function (e) {
+    e.preventDefault();
+    this.navigate($(e.currentTarget).attr('href'), {
+      trigger: true
+    });
+  }
+});
 },{"../models/post":5,"../routers/postRouter":7}],12:[function(require,module,exports){
 var
   Backbone = window.Backbone,
-  Handlebars = window.Handlebars,
-  //PostRouter = require('../routers/postRouter'),
-  PostListView = Backbone.View.extend({
-    tagName: 'li',
+  Handlebars = window.Handlebars;
 
-    // events: {
-    //   'click a': 'handleClick'
-    // },
+module.exports = Backbone.View.extend({
+  tagName: 'li',
 
-    template: Handlebars.compile('<a href="/posts/{{postId}}">{{title}}</a>'),
+  events: {
+    'click a': 'handleClick'
+  },
 
-    render: function () {
-      this.el.innerHTML = this.template(this.model.toJSON());
-      return this;
-    }
+  template: Handlebars.compile('<a href="/posts/{{postId}}">{{title}}</a>'),
 
-    // handleClick: function (e) {
+  render: function () {
+    this.el.innerHTML = this.template(this.model.toJSON());
+    return this;
+  },
 
-    //   e.preventDefault();
+  handleClick: function (e) {
+    var PostRouter = require('../routers/postRouter');
+    e.preventDefault();
 
-    //   PostRouter.instance.navigate($(e.currentTarget).attr("href"), {
-    //     trigger: true
-    //   });
-
-    // }
-  });
-
-module.exports = PostListView;
-},{}],13:[function(require,module,exports){
+    PostRouter.instance.navigate($(e.currentTarget).attr("href"), {
+      trigger: true
+    });
+  }
+});
+},{"../routers/postRouter":7}],13:[function(require,module,exports){
 var
   Backbone = window.Backbone,
   Handlebars = window.Handlebars,
-  blog = window.blog,
-  CommentsView = require('./commentsView'),
-  PostRouter = require('../routers/postRouter'),
-  PostView = Backbone.View.extend({
+  CommentsView = require('./commentsView');
 
-    template: Handlebars.compile($('#postView').html()),
+module.exports = Backbone.View.extend({
 
-    events: {
-      'click a': 'handleClick'
-    },
+  template: Handlebars.compile($('#postView').html()),
 
-    render: function () {
-      var post = this.model,
-        model = post.toJSON();
+  events: {
+    'click a': 'handleClick'
+  },
 
-      model.pubDate = new Date(Date.parse(model.pubDate)).toDateString();
-      this.el.innerHTML = this.template(model);
+  render: function () {
+    var post = this.model,
+      model = post.toJSON();
 
-      var commentsView = new CommentsView({
-        post: post
-      });
+    model.pubDate = new Date(Date.parse(model.pubDate)).toDateString();
+    this.el.innerHTML = this.template(model);
 
-      this.$el.find('>.comments').html(commentsView.render().el);
+    var commentsView = new CommentsView({
+      post: post
+    });
 
-      return this;
-    },
+    this.$el.find('>.comments').html(commentsView.render().el);
 
-    handleClick: function (e) {
-      e.preventDefault();
-      PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
-        trigger: true
-      });
-      return false;
-    }
-  });
+    return this;
+  },
 
-module.exports = PostView;
+  handleClick: function (e) {
+    var PostRouter = require('../routers/postRouter');
+    e.preventDefault();
+    PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
+      trigger: true
+    });
+    return false;
+  }
+});
 },{"../routers/postRouter":7,"./commentsView":10}],14:[function(require,module,exports){
-var Backbone = window.Backbone,
+var
+  Backbone = window.Backbone,
   Handlebars = window.Handlebars,
-  blog = window.blog,
-  PostListView = require('./postListView'),
-  PostRouter = require('../routers/postRouter'),
-  PostsListView = Backbone.View.extend({
-    events: {
-      'click a': 'handleClick'
-    },
-    template: Handlebars.compile($('#index').html()),
-    render: function () {
-      this.el.innerHTML = this.template();
-      var ul = this.$el.find('ul');
-      this.collection.forEach(function (post) {
-        ul.append(new PostListView({
-          model: post
-        }).render().el);
-      });
-      return this;
-    },
-    handleClick: function (e) {
-      e.preventDefault();
-      PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
-        trigger: true
-      });
-    }
-  });
-debugger;
-module.exports = PostsListView;
-},{"../routers/postRouter":7,"./postListView":12}]},{},[2,1,3,4,5,6,7,8,9,10,11,12,13,14]);
+  PostListView = require('./postListView');
+
+module.exports = Backbone.View.extend({
+  events: {
+    'click a': 'handleClick'
+  },
+  template: Handlebars.compile($('#index').html()),
+  render: function () {
+    this.el.innerHTML = this.template();
+    var ul = this.$el.find('ul');
+    this.collection.forEach(function (post) {
+      ul.append(new PostListView({
+        model: post
+      }).render().el);
+    });
+    return this;
+  },
+
+  handleClick: function (e) {
+    var PostRouter = require('../routers/postRouter');
+    e.preventDefault();
+    PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
+      trigger: true
+    });
+  }
+});
+},{"../routers/postRouter":7,"./postListView":12}]},{},[2]);

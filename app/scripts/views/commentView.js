@@ -1,19 +1,18 @@
 var
   Backbone = window.Backbone,
-  Handlebars = window.Handlebars,
-  CommentView = Backbone.View.extend({
+  Handlebars = window.Handlebars;
 
-    template: Handlebars.compile($('#commentView').html()),
+module.exports = Backbone.View.extend({
 
-    render: function () {
-      var model = this.model.toJSON();
+  template: Handlebars.compile($('#commentView').html()),
 
-      model.date = new Date(Date.parse(model.date)).toDateString();
+  render: function () {
+    var model = this.model.toJSON();
 
-      this.el.innerHTML = this.template(model);
+    model.date = new Date(Date.parse(model.date)).toDateString();
 
-      return this;
-    }
-  });
+    this.el.innerHTML = this.template(model);
 
-module.exports = CommentView;
+    return this;
+  }
+});

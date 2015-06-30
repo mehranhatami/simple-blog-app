@@ -1,5 +1,6 @@
 var
-  Backbone = window.Backbone,
+  $ = require('jquery'),
+  Backbone = require('backbone'),
   Posts = require('./models/posts'),
   PostsListView = require('./views/postsListView'),
   PostListView = require('./views/postListView'),
@@ -25,12 +26,13 @@ var app = {
     });
 
     // Getting ride of handleClick
-    // $("#main").on('click', 'a', function (e) {
-    //   e.preventDefault();
-    //   postRouter.navigate($(e.currentTarget).attr('href'), {
-    //     trigger: true
-    //   });
-    // });
+    // $("#main a").click(function (e) {});
+    $("#main").on('click', 'a', function (e) {
+      e.preventDefault();
+      postRouter.navigate($(e.currentTarget).attr('href'), {
+        trigger: true
+      });
+    });
   }
 };
 

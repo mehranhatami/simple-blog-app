@@ -1,8 +1,9 @@
 var
-  Backbone = window.Backbone,
-  Handlebars = window.Handlebars;
+  $ = require('jquery'),
+  Backbone = require('backbone'),
+  Handlebars = require('handlebars');
 
-module.exports = Backbone.View.extend({
+var CommentView = Backbone.View.extend({
 
   template: Handlebars.compile($('#commentView').html()),
 
@@ -11,8 +12,10 @@ module.exports = Backbone.View.extend({
 
     model.date = new Date(Date.parse(model.date)).toDateString();
 
-    this.el.innerHTML = this.template(model);
+    this.$el.html(this.template(model));
 
     return this;
   }
 });
+
+module.exports = CommentView;

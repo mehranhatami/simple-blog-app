@@ -1,27 +1,26 @@
 var
-  Backbone = window.Backbone,
-  Handlebars = window.Handlebars;
+  Backbone = require('backbone'),
+  Handlebars = require('handlebars');
 
-module.exports = Backbone.View.extend({
+var PostListView = Backbone.View.extend({
   tagName: 'li',
 
-  events: {
-    'click a': 'handleClick'
+  initialize: function (options) {
+    this.model = options.model;
   },
+
+  events: {},
 
   template: Handlebars.compile('<a href="/posts/{{postId}}">{{title}}</a>'),
 
-  render: function () {
-    this.el.innerHTML = this.template(this.model.toJSON());
-    return this;
+  compile: function () {
+    return this.template(this.model.toJSON());
   },
 
-  handleClick: function (e) {
-    var PostRouter = require('../routers/postRouter');
-    e.preventDefault();
-
-    PostRouter.instance.navigate($(e.currentTarget).attr("href"), {
-      trigger: true
-    });
+  render: function () {
+    this.$el.html(this.compile());
+    return this;
   }
 });
+
+module.exports = PostListView;

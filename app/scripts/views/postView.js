@@ -1,15 +1,14 @@
 var
-  Backbone = window.Backbone,
-  Handlebars = window.Handlebars,
+  $ = require('jquery'),
+  Backbone = require('backbone'),
+  Handlebars = require('handlebars'),
   CommentsView = require('./commentsView');
 
-module.exports = Backbone.View.extend({
+var PostView = Backbone.View.extend({
 
   template: Handlebars.compile($('#postView').html()),
 
-  events: {
-    'click a': 'handleClick'
-  },
+  events: {},
 
   render: function () {
     var post = this.model,
@@ -25,14 +24,7 @@ module.exports = Backbone.View.extend({
     this.$el.find('>.comments').html(commentsView.render().el);
 
     return this;
-  },
-
-  handleClick: function (e) {
-    var PostRouter = require('../routers/postRouter');
-    e.preventDefault();
-    PostRouter.instance.navigate($(e.currentTarget).attr('href'), {
-      trigger: true
-    });
-    return false;
   }
 });
+
+module.exports = PostView;

@@ -1,9 +1,9 @@
 var
-  Backbone = window.Backbone,
+  Backbone = require('backbone'),
   CommentView = require('./commentView'),
   CommentFormView = require('./commentFormView');
 
-module.exports = Backbone.View.extend({
+var CommentsView = Backbone.View.extend({
   initialize: function (options) {
     this.post = options.post;
     this.post.comments.on('add', this.renderComment, this);
@@ -29,3 +29,5 @@ module.exports = Backbone.View.extend({
     return this;
   }
 });
+
+module.exports = CommentsView;

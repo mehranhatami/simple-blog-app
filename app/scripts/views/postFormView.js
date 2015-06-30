@@ -1,20 +1,20 @@
 var
-  Backbone = window.Backbone,
-  Handlebars = window.Handlebars,
+  $ = require('jquery'),
+  Backbone = require('backbone'),
+  Handlebars = require('handlebars'),
   Post = require('../models/post');
 
-module.exports = Backbone.View.extend({
+var PostFormView = Backbone.View.extend({
   tagName: 'form',
-
+  router: null,
   template: Handlebars.compile($('#postFormView').html()),
+
+  events: {
+    'click button': 'createPost'
+  },
 
   initialize: function (options) {
     this.posts = options.posts;
-  },
-
-  events: {
-    'click button': 'createPost',
-    'click a': 'handleClick'
   },
 
   render: function () {
@@ -22,7 +22,6 @@ module.exports = Backbone.View.extend({
     return this;
   },
 
-  router: null,
   navigate: function (url, options) {
     if (!this.router) {
       this.router = require('../routers/postRouter');
@@ -39,6 +38,7 @@ module.exports = Backbone.View.extend({
       },
       post = new Post(postAttrs);
 
+    //Alternative solution for this.posts.create(...)
     //this.posts.add(post);
     //post.save();
 
@@ -49,11 +49,7 @@ module.exports = Backbone.View.extend({
     });
 
     return false;
-  },
-  handleClick: function (e) {
-    e.preventDefault();
-    this.navigate($(e.currentTarget).attr('href'), {
-      trigger: true
-    });
   }
 });
+
+module.exports = PostFormView;

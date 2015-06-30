@@ -1,8 +1,8 @@
 var
-  Backbone = window.Backbone,
+  Backbone = require('backbone'),
   Comments = require('./comments');
 
-module.exports = Backbone.Model.extend({
+var Post = Backbone.Model.extend({
   idAttribute: 'postId',
   urlRoot: '/posts',
   initialize: function () {
@@ -11,3 +11,5 @@ module.exports = Backbone.Model.extend({
     });
   }
 });
+
+module.exports = Post;

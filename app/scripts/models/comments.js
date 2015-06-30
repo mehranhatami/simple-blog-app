@@ -1,8 +1,9 @@
 var
-  Backbone = window.Backbone,
+  Backbone = require('backbone'),
   Comment = require('./comment');
 
-module.exports = Backbone.Collection.extend({
+var Comments = Backbone.Collection.extend({
+  model: Comment,
   initialize: function (models, options) {
     this.post = options.post;
   },
@@ -10,3 +11,5 @@ module.exports = Backbone.Collection.extend({
     return this.post.url() + '/comments';
   }
 });
+
+module.exports = Comments;

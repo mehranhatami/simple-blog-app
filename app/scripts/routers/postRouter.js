@@ -1,8 +1,9 @@
 var
-  Backbone = window.Backbone,
+  Backbone = require('backbone'),
   PostView = require('../views/postView'),
   PostFormView = require('../views/postFormView'),
-  CommentsView = require('../views/commentsView');
+  CommentsView = require('../views/commentsView'),
+  PostsListView = require('../views/postsListView');
 
 var PostRouter = Backbone.Router.extend({
   initialize: function (options) {
@@ -15,13 +16,11 @@ var PostRouter = Backbone.Router.extend({
     'posts/:id': 'singlePost'
   },
   index: function () {
-    var PostsListView = require('../views/postsListView');
-
-    this.postsListView = new PostsListView({
+    var postsListView = new PostsListView({
       collection: this.posts
     });
 
-    this.main.html(this.postsListView.render().el);
+    this.main.html(postsListView.render().el);
   },
   singlePost: function (id) {
     var post = this.posts.get(id);
@@ -40,10 +39,12 @@ var PostRouter = Backbone.Router.extend({
   }
 });
 
-module.exports = function instantiate(options) {
+PostRouter.new = function instantiate(options) {
   var postRouter = new PostRouter(options);
 
   // arguments.callee.instance = postRouter;
   instantiate.instance = postRouter;
   return postRouter;
 };
+
+module.exports = PostRouter.new;

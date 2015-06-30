@@ -1,8 +1,9 @@
 var
-  Backbone = window.Backbone,
-  Handlebars = window.Handlebars;
+  $ = require('jquery'),
+  Backbone = require('backbone'),
+  Handlebars = require('handlebars');
 
-module.exports = Backbone.View.extend({
+var CommentFormView = Backbone.View.extend({
   tagName: 'form',
 
   initialize: function (options) {
@@ -31,6 +32,7 @@ module.exports = Backbone.View.extend({
       };
 
     this.post.comments.create(commentAttrs);
+    
     this.el.reset();
 
     e.preventDefault();
@@ -38,3 +40,5 @@ module.exports = Backbone.View.extend({
   }
 
 });
+
+module.exports = CommentFormView;

@@ -1,6 +1,8 @@
 var
-  Backbone = window.Backbone;
+  Backbone = require('backbone');
 
-module.exports = Backbone.Model.extend({
+var Comment = Backbone.Model.extend({
   idAttribute: 'commentId'
 });
+
+module.exports = Comment;

@@ -1,7 +1,8 @@
-define(function () {
-  var Backbone = window.Backbone;
+var
+  Backbone = require('backbone');
 
-  return Backbone.Model.extend({
-    idAttribute: 'commentId'
-  });
+var Comment = Backbone.Model.extend({
+  idAttribute: 'commentId'
 });
+
+module.exports = Comment;

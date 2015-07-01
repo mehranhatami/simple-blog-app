@@ -41,8 +41,8 @@ module.exports = app;
 },{"./models/posts":6,"./routers/postRouter":7,"./views/postListView":12,"./views/postsListView":14,"backbone":"backbone","jquery":"jquery"}],2:[function(require,module,exports){
 var
   $ = require('jquery'),
-  Backbone = require('backbone'),
-  app = require('./app');
+  app = require('./app'),
+  Backbone = require('backbone');
 
 Backbone.$ = $;
 
@@ -150,7 +150,6 @@ PostRouter.new = function instantiate(options) {
 };
 
 module.exports = PostRouter.new;
-
 },{"../views/commentsView":10,"../views/postFormView":11,"../views/postView":13,"../views/postsListView":14,"backbone":"backbone"}],8:[function(require,module,exports){
 var
   $ = require('jquery'),
@@ -6645,7 +6644,7 @@ var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, _
 
 },{}],"jquery":[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v2.1.4
+ * jQuery JavaScript Library v2.1.3
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -6655,7 +6654,7 @@ var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, _
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2015-04-28T16:01Z
+ * Date: 2014-12-18T15:11Z
  */
 
 (function( global, factory ) {
@@ -6713,7 +6712,7 @@ var
 	// Use the correct document accordingly with window argument (sandbox)
 	document = window.document,
 
-	version = "2.1.4",
+	version = "2.1.3",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -7177,12 +7176,7 @@ jQuery.each("Boolean Number String Function Array Date RegExp Object Error".spli
 });
 
 function isArraylike( obj ) {
-
-	// Support: iOS 8.2 (not reproducible in simulator)
-	// `in` check used to prevent JIT error (gh-2145)
-	// hasOwn isn't used here due to false negatives
-	// regarding Nodelist length in IE
-	var length = "length" in obj && obj.length,
+	var length = obj.length,
 		type = jQuery.type( obj );
 
 	if ( type === "function" || jQuery.isWindow( obj ) ) {
@@ -15859,7 +15853,7 @@ return jQuery;
 (function (global){
 /**
  * @license
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern -o ./lodash.js`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -15872,7 +15866,7 @@ return jQuery;
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '3.0.1';
+  var VERSION = '3.0.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -16919,14 +16913,11 @@ return jQuery;
      * @returns {Object} Returns the new reversed `LazyWrapper` object.
      */
     function lazyReverse() {
-      if (this.filtered) {
-        var result = new LazyWrapper(this);
-        result.dir = -1;
-        result.filtered = true;
-      } else {
-        result = this.clone();
-        result.dir *= -1;
-      }
+      var filtered = this.filtered,
+          result = filtered ? new LazyWrapper(this) : this.clone();
+
+      result.dir = this.dir * -1;
+      result.filtered = filtered;
       return result;
     }
 
@@ -16945,12 +16936,12 @@ return jQuery;
       }
       var dir = this.dir,
           isRight = dir < 0,
-          view = getView(0, array.length, this.views),
+          length = array.length,
+          view = getView(0, length, this.views),
           start = view.start,
           end = view.end,
-          length = end - start,
           dropCount = this.dropCount,
-          takeCount = nativeMin(length, this.takeCount - dropCount),
+          takeCount = nativeMin(end - start, this.takeCount - dropCount),
           index = isRight ? end : start - 1,
           iteratees = this.iteratees,
           iterLength = iteratees ? iteratees.length : 0,
@@ -16986,7 +16977,7 @@ return jQuery;
           result[resIndex++] = value;
         }
       }
-      return result;
+      return isRight ? result.reverse() : result;
     }
 
     /*------------------------------------------------------------------------*/
@@ -17507,7 +17498,7 @@ return jQuery;
       // Handle "_.property" and "_.matches" style callback shorthands.
       return type == 'object'
         ? baseMatches(func, !argCount)
-        : baseProperty(func + '');
+        : baseProperty(argCount ? baseToString(func) : func);
     }
 
     /**
@@ -18237,9 +18228,6 @@ return jQuery;
             ? toPlainObject(value)
             : (isPlainObject(value) ? value : {});
         }
-        else {
-          isCommon = false;
-        }
       }
       // Add the source value to the stack of traversed objects and associate
       // it with its merged value.
@@ -18361,8 +18349,7 @@ return jQuery;
       if (end < 0) {
         end += length;
       }
-      length = start > end ? 0 : (end - start) >>> 0;
-      start >>>= 0;
+      length = start > end ? 0 : (end - start);
 
       var result = Array(length);
       while (++index < length) {
@@ -18969,7 +18956,7 @@ return jQuery;
         return '';
       }
       var padLength = length - strLength;
-      chars = chars == null ? ' ' : (chars + '');
+      chars = chars == null ? ' ' : baseToString(chars);
       return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
     }
 
@@ -19162,7 +19149,7 @@ return jQuery;
         case stringTag:
           // Coerce regexes to strings and treat strings primitives and string
           // objects as equal. See https://es5.github.io/#x15.10.6.4 for more details.
-          return object == (other + '');
+          return object == baseToString(other);
       }
       return false;
     }
@@ -21180,9 +21167,6 @@ return jQuery;
     function wrapperReverse() {
       var value = this.__wrapped__;
       if (value instanceof LazyWrapper) {
-        if (this.__actions__.length) {
-          value = new LazyWrapper(this);
-        }
         return new LodashWrapper(value.reverse());
       }
       return this.thru(function(value) {
@@ -21558,7 +21542,7 @@ return jQuery;
      * @returns {Array|Object|string} Returns `collection`.
      * @example
      *
-     * _([1, 2, 3]).forEach(function(n) { console.log(n); }).value();
+     * _([1, 2, 3]).forEach(function(n) { console.log(n); });
      * // => logs each value from left to right and returns the array
      *
      * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n, key) { console.log(n, key); });
@@ -22974,7 +22958,7 @@ return jQuery;
      * // => 'FRED'
      *
      * // modifying the result cache
-     * upperCase.cache.set('fred', 'BARNEY');
+     * upperCase.cache.set('fred, 'BARNEY');
      * upperCase('fred');
      * // => 'BARNEY'
      *
@@ -25062,7 +25046,7 @@ return jQuery;
 
     /**
      * Converts `string` to kebab case (a.k.a. spinal case).
-     * See [Wikipedia](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles) for
+     * See [Wikipedia](https://en.wikipedia.org/wiki/Letter_case#Computers) for
      * more details.
      *
      * @static
@@ -26546,8 +26530,7 @@ return jQuery;
 
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-      var lodashFunc = lodash[methodName],
-          retUnwrapped = /^(?:first|last)$/.test(methodName);
+      var retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__,
@@ -26560,12 +26543,12 @@ return jQuery;
         if (retUnwrapped && !chainAll) {
           return onlyLazy
             ? func.call(value)
-            : lodashFunc.call(lodash, this.value());
+            : lodash[methodName](this.value());
         }
         var interceptor = function(value) {
           var otherArgs = [value];
           push.apply(otherArgs, args);
-          return lodashFunc.apply(lodash, otherArgs);
+          return lodash[methodName].apply(lodash, otherArgs);
         };
         if (isLazy || isArray(value)) {
           var wrapper = onlyLazy ? value : new LazyWrapper(this),

@@ -1,30 +1,47 @@
-define([
-  'views/postListView'
-], function (PostListView) {
- var Backbone = window.Backbone,
-    Handlebars = window.Handlebars;
+var
+  $ = require('jquery'),
+  _ = require('lodash'),
+  Backbone = require('backbone'),
+  Handlebars = require('handlebars'),
+  PostListView = require('./postListView');
 
-  return Backbone.View.extend({
-    events: {
-      'click a': 'handleClick'
-    },
-    template: Handlebars.compile($("#index").html()),
-    render: function () {
-      this.el.innerHTML = this.template();
-      var ul = this.$el.find("ul");
-      this.collection.forEach(function (post) {
-        ul.append(new PostListView({
+var PostsListView = Backbone.View.extend({
+  events: {},
+  template: Handlebars.compile($('#index').html()),
+  render: function () {
+    this.$el.html(this.template());
+
+    var ul = this.$el.find('ul');
+    
+    // this.collection.forEach(function (post) {
+    //   ul.append(new PostListView({
+    //     model: post
+    //   }).render().el);
+    // });
+
+    //using lodash
+    _(this.collection.models)
+      .map(function (post, index) {
+        return new PostListView({
           model: post
-        }).render().el);
-      });
-      return this;
-    },
-    handleClick: function (e) {
-      var PostRouter = window.PostRouter;
-      e.preventDefault();
-      PostRouter.instance.navigate($(e.currentTarget).attr("href"), {
-        trigger: true
-      });
-    }
-  });
+        }).render().el;
+      })
+      .each(function(postView){
+        ul.append(postView);
+      })
+      .value();
+
+    // Another approach
+    // var htmlStr = '';
+    // this.collection.forEach(function (post) {
+    //   htmlStr += new PostListView({
+    //     model: post
+    //   }).compile();
+    // });
+    // this.$el.find('ul').html(htmlStr);
+
+    return this;
+  }
 });
+
+module.exports = PostsListView;

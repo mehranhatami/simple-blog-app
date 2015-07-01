@@ -1,27 +1,26 @@
-define(function () {
-  var Backbone = window.Backbone,
-    Handlebars = window.Handlebars;
+var
+  Backbone = require('backbone'),
+  Handlebars = require('handlebars');
 
-  return Backbone.View.extend({
-    tagName: 'li',
+var PostListView = Backbone.View.extend({
+  tagName: 'li',
 
-    events: {
-      'click a': 'handleClick'
-    },
+  initialize: function (options) {
+    this.model = options.model;
+  },
 
-    template: Handlebars.compile('<a href="/posts/{{postId}}">{{title}}</a>'),
+  events: {},
 
-    render: function () {
-      this.el.innerHTML = this.template(this.model.toJSON());
-      return this;
-    },
+  template: Handlebars.compile('<a href="/posts/{{postId}}">{{title}}</a>'),
 
-    handleClick: function (e) {
-      var PostRouter = window.PostRouter;
-      e.preventDefault();
-      PostRouter.instance.navigate($(e.currentTarget).attr("href"), {
-        trigger: true
-      });
-    }
-  });
+  compile: function () {
+    return this.template(this.model.toJSON());
+  },
+
+  render: function () {
+    this.$el.html(this.compile());
+    return this;
+  }
 });
+
+module.exports = PostListView;

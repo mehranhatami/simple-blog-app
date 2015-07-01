@@ -1,47 +1,55 @@
-define([
-  'models/post'
-], function (Post) {
-  var Backbone = window.Backbone,
-    Handlebars = window.Handlebars;
+var
+  $ = require('jquery'),
+  Backbone = require('backbone'),
+  Handlebars = require('handlebars'),
+  Post = require('../models/post');
 
-  return Backbone.View.extend({
-    tagName: 'form',
+var PostFormView = Backbone.View.extend({
+  tagName: 'form',
+  router: null,
+  template: Handlebars.compile($('#postFormView').html()),
 
-    template: Handlebars.compile($("#postFormView").html()),
+  events: {
+    'click button': 'createPost'
+  },
 
-    initialize: function (options) {
-      this.posts = options.posts;
-    },
+  initialize: function (options) {
+    this.posts = options.posts;
+  },
 
-    events: {
-      'click button': 'createPost'
-    },
+  render: function () {
+    this.el.innerHTML = this.template();
+    return this;
+  },
 
-    render: function () {
-      this.el.innerHTML = this.template();
-      return this;
-    },
-
-    createPost: function () {
-      var postAttrs = {
-          postId: this.posts.length,
-          content: $("#postText").val(),
-          title: $("#postTitle").val(),
-          pubDate: new Date()
-        },
-        post = new Post(postAttrs),
-        PostRouter = window.PostRouter;
-
-      //this.posts.add(post);
-      //post.save();
-
-      this.posts.create(postAttrs);
-
-      PostRouter.instance.navigate('/', {
-        trigger: true
-      });
-
-      return false;
+  navigate: function (url, options) {
+    if (!this.router) {
+      this.router = require('../routers/postRouter');
     }
-  });
+    this.router.instance.navigate(url, options);
+  },
+
+  createPost: function () {
+    var postAttrs = {
+        postId: this.posts.length,
+        content: $('#postText').val(),
+        title: $('#postTitle').val(),
+        pubDate: new Date()
+      },
+      post = new Post(postAttrs);
+
+    //Alternative solution for this.posts.create(...)
+    //this.posts.add(post);
+    //post.save();
+
+    this.posts.create(postAttrs);
+
+    this.navigate('/', {
+      trigger: true
+    });
+
+    return false;
+  }
 });
+
+module.exports = PostFormView;

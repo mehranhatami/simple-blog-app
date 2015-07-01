@@ -15,8 +15,6 @@ app.use(cookieParser());
 
 app.use(express.static('path/to/png/gif/and/js/files'));
 
-//app.set('view engine', 'ejs');
-
 app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
 

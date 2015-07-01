@@ -1,15 +1,15 @@
-define([
-  'models/comments'
-], function (Comments) {
-  var Backbone = window.Backbone;
+var
+  Backbone = require('backbone'),
+  Comments = require('./comments');
 
-  return Backbone.Model.extend({
-    idAttribute: 'postId',
-    urlRoot: "/posts",
-    initialize: function () {
-      this.comments = new Comments([], {
-        post: this
-      });
-    }
-  });
+var Post = Backbone.Model.extend({
+  idAttribute: 'postId',
+  urlRoot: '/posts',
+  initialize: function () {
+    this.comments = new Comments([], {
+      post: this
+    });
+  }
 });
+
+module.exports = Post;

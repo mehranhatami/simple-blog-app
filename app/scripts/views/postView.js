@@ -1,40 +1,30 @@
-define([
-  'views/commentsView'
-], function (CommentsView) {
-  var Backbone = window.Backbone,
-    Handlebars = window.Handlebars;
+var
+  $ = require('jquery'),
+  Backbone = require('backbone'),
+  Handlebars = require('handlebars'),
+  CommentsView = require('./commentsView');
 
-  return Backbone.View.extend({
+var PostView = Backbone.View.extend({
 
-    template: Handlebars.compile($("#postView").html()),
+  template: Handlebars.compile($('#postView').html()),
 
-    events: {
-      'click a': 'handleClick'
-    },
+  events: {},
 
-    render: function () {
-      var post = this.model,
-        model = post.toJSON();
+  render: function () {
+    var post = this.model,
+      model = post.toJSON();
 
-      model.pubDate = new Date(Date.parse(model.pubDate)).toDateString();
-      this.el.innerHTML = this.template(model);
+    model.pubDate = new Date(Date.parse(model.pubDate)).toDateString();
+    this.el.innerHTML = this.template(model);
 
-      var commentsView = new CommentsView({
-        post: post
-      });
+    var commentsView = new CommentsView({
+      post: post
+    });
 
-      this.$el.find('>.comments').html(commentsView.render().el);
+    this.$el.find('>.comments').html(commentsView.render().el);
 
-      return this;
-    },
-
-    handleClick: function (e) {
-      var PostRouter = window.PostRouter;
-      e.preventDefault();
-      PostRouter.instance.navigate($(e.currentTarget).attr("href"), {
-        trigger: true
-      });
-      return false;
-    }
-  });
+    return this;
+  }
 });
+
+module.exports = PostView;

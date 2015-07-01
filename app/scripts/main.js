@@ -1,7 +1,7 @@
 var
   $ = require('jquery'),
-  app = require('./app'),
-  Backbone = require('backbone');
+  Backbone = require('backbone'),
+  app = require('./app');
 
 Backbone.$ = $;
 

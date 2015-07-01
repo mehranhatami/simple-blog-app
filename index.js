@@ -4,8 +4,10 @@ var express = require('express'),
   cookieParser = require('cookie-parser'),
   bodyParser = require('body-parser'),
   error = require('./error'),
-  routes = require('./routes'),
+  //routes = require('./routes'),
   app = express();
+
+app.set('port', (process.env.PORT || 4000));
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -20,14 +22,12 @@ app.set('view engine', 'html');
 
 app.set('views', __dirname + '/app');
 
-routes(app);
+//routes(app);
 
 app.use(express.static(path.join(__dirname, 'app')));
 
 error(app);
 
-app.set('port', 4000);
-
-var server = app.listen(4000, function () {
-  console.log('Express server listening on port ' + server.address().port);
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
 });

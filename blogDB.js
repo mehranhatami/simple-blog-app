@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient,
   format = require('util').format,
-  mongodbUrl = 'mongodb://127.0.0.1:27017/blog-app',
+  mongodbUrl = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://127.0.0.1:27017/blog-app',
   blogDB = {};
 
 blogDB.findAll = function (collectionName, callback) {
@@ -57,7 +57,9 @@ blogDB.update = function (collectionName, conditionObject, updateObject, callbac
     if (err) throw err;
 
     var collection = db.collection(collectionName);
-    collection.update(conditionObject, updateObject, {upsert:true}, function(err, result) {
+    collection.update(conditionObject, updateObject, {
+      upsert: true
+    }, function (err, result) {
       if (err) throw err;
       callback(null, result);
       db.close();

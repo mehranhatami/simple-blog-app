@@ -4,7 +4,7 @@ var express = require('express'),
   cookieParser = require('cookie-parser'),
   bodyParser = require('body-parser'),
   error = require('./error'),
-  //routes = require('./routes'),
+  routes = require('./routes'),
   app = express();
 
 app.set('port', (process.env.PORT || 4000));
@@ -22,7 +22,7 @@ app.set('view engine', 'html');
 
 app.set('views', __dirname + '/app');
 
-//routes(app);
+routes(app);
 
 app.use(express.static(path.join(__dirname, 'app')));
 

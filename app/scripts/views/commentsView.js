@@ -1,5 +1,5 @@
 var
-  Backbone = require('backbone'),
+  //Backbone = require('backbone'),
   CommentView = require('./commentView'),
   CommentFormView = require('./commentFormView');
 

@@ -1,5 +1,5 @@
 var
-  // Backbone = require('backbone'),
+  Backbone = require('backbone'),
   PostView = require('../views/postView'),
   PostFormView = require('../views/postFormView'),
   CommentsView = require('../views/commentsView'),

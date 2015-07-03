@@ -49,11 +49,13 @@
   <!-- Piwik -->
   <script type="text/javascript">
     var _paq = _paq || [];
-    _paq.push(["setCookieDomain", "*.fixjs-blog.herokuapp.com"]);
-    _paq.push(["setDomains", ["*.fixjs-blog.herokuapp.com"]]);
+    
+    _paq.push(['setDocumentTitle', document.domain + "/" + document.title]);
     _paq.push(['trackPageView']);
     _paq.push(['enableLinkTracking']);
     _paq.push(['enableJSErrorTracking']);
+    _paq.push(["setCookieDomain", "*.fixjs-blog.herokuapp.com"]);
+    _paq.push(["setDomains", ["*.fixjs-blog.herokuapp.com"]]);
     (function() {
       var u="//cheshmak.me:7003/";
       _paq.push(['setTrackerUrl', u+'piwik.php']);

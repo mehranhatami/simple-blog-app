@@ -101,7 +101,7 @@ var Posts = Backbone.Collection.extend({
 module.exports = Posts;
 },{"./post":5,"backbone":"backbone"}],7:[function(require,module,exports){
 var
-  Backbone = require('backbone'),
+  // Backbone = require('backbone'),
   PostView = require('../views/postView'),
   PostFormView = require('../views/postFormView'),
   CommentsView = require('../views/commentsView'),
@@ -151,7 +151,7 @@ PostRouter.new = function instantiate(options) {
 
 module.exports = PostRouter.new;
 
-},{"../views/commentsView":10,"../views/postFormView":11,"../views/postView":13,"../views/postsListView":14,"backbone":"backbone"}],8:[function(require,module,exports){
+},{"../views/commentsView":10,"../views/postFormView":11,"../views/postView":13,"../views/postsListView":14}],8:[function(require,module,exports){
 var
   $ = require('jquery'),
   Backbone = require('backbone'),

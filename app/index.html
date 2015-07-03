@@ -49,8 +49,11 @@
   <!-- Piwik -->
   <script type="text/javascript">
     var _paq = _paq || [];
+    _paq.push(["setCookieDomain", "*.fixjs-blog.herokuapp.com"]);
+    _paq.push(["setDomains", ["*.fixjs-blog.herokuapp.com"]]);
     _paq.push(['trackPageView']);
     _paq.push(['enableLinkTracking']);
+    _paq.push(['trackEvent']);
     _paq.push(['enableJSErrorTracking']);
     (function() {
       var u="//cheshmak.me:7003/";
@@ -62,6 +65,7 @@
   </script>
   <noscript><p><img src="//cheshmak.me:7003/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
   <!-- End Piwik Code -->
+
 </body>
 
 </html>

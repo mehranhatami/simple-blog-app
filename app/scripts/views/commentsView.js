@@ -18,17 +18,13 @@ var CommentsView = Backbone.View.extend({
 
     this.post.comments.fetch();
 
-    //return this;
+    return this;
   },
 
   renderComment: function (comment) {
     this.$el.append(new CommentView({
       model: comment
     }).render().el);
-
-    setTimeout(function(){
-      throw new Error('FixJS Error in setTimeout!', 10);
-    });
 
     return this;
   }

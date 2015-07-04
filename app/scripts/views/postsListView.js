@@ -3,13 +3,16 @@ var
   _ = require('lodash'),
   Backbone = require('backbone'),
   Handlebars = require('handlebars'),
-  PostListView = require('./postListView');
+  PostListView = require('./postListView'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var PostsListView = Backbone.View.extend({
+var PostsListView = utils.extend(BaseView, {
   events: {},
   template: Handlebars.compile($('#index').html()),
   render: function () {
     this.$el.html(this.template());
+
 
     var ul = this.$el.find('ul');
     
@@ -39,6 +42,8 @@ var PostsListView = Backbone.View.extend({
     //   }).compile();
     // });
     // this.$el.find('ul').html(htmlStr);
+
+    ul = undefined;
 
     return this;
   }

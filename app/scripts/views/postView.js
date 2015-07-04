@@ -2,9 +2,11 @@ var
   $ = require('jquery'),
   Backbone = require('backbone'),
   Handlebars = require('handlebars'),
-  CommentsView = require('./commentsView');
+  CommentsView = require('./commentsView'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var PostView = Backbone.View.extend({
+var PostView = utils.extend(BaseView, {
 
   template: Handlebars.compile($('#postView').html()),
 
@@ -20,6 +22,8 @@ var PostView = Backbone.View.extend({
     var commentsView = new CommentsView({
       post: post
     });
+
+    this.childViews.push(commentsView);
 
     this.$el.find('>.comments').html(commentsView.render().el);
 

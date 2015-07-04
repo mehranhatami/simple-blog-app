@@ -1,8 +1,10 @@
 var
   Backbone = require('backbone'),
-  Handlebars = require('handlebars');
+  Handlebars = require('handlebars'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var PostListView = Backbone.View.extend({
+var PostListView = utils.extend(BaseView, {
   tagName: 'li',
 
   initialize: function (options) {

@@ -38,7 +38,7 @@ var app = {
 };
 
 module.exports = app;
-},{"./models/posts":6,"./routers/postRouter":7,"./views/postListView":12,"./views/postsListView":14,"backbone":"backbone","jquery":"jquery"}],2:[function(require,module,exports){
+},{"./models/posts":6,"./routers/postRouter":7,"./views/postListView":14,"./views/postsListView":16,"backbone":"backbone","jquery":"jquery"}],2:[function(require,module,exports){
 var
   $ = require('jquery'),
   Backbone = require('backbone'),
@@ -107,6 +107,11 @@ var
   CommentsView = require('../views/commentsView'),
   PostsListView = require('../views/postsListView');
 
+window._PostView = PostView;
+window._PostFormView = PostFormView;
+window._CommentsView = CommentsView;
+window._PostsListView = PostsListView;
+
 var PostRouter = Backbone.Router.extend({
   initialize: function (options) {
     this.posts = options.posts;
@@ -118,11 +123,11 @@ var PostRouter = Backbone.Router.extend({
     'posts/:id': 'singlePost'
   },
   index: function () {
-    var postsListView = new PostsListView({
+    this.postsListView = new PostsListView({
       collection: this.posts
     });
 
-    this.main.html(postsListView.render().el);
+    this.main.html(this.postsListView.render().el);
   },
   singlePost: function (id) {
     var post = this.posts.get(id);
@@ -137,6 +142,7 @@ var PostRouter = Backbone.Router.extend({
     this.postFormView = new PostFormView({
       posts: this.posts
     });
+
     this.main.html(this.postFormView.render().el);
   }
 });
@@ -146,18 +152,89 @@ PostRouter.new = function instantiate(options) {
 
   // arguments.callee.instance = postRouter;
   instantiate.instance = postRouter;
+  
+  window._postRouter = postRouter;
+
   return postRouter;
 };
 
 module.exports = PostRouter.new;
 
-},{"../views/commentsView":10,"../views/postFormView":11,"../views/postView":13,"../views/postsListView":14,"backbone":"backbone"}],8:[function(require,module,exports){
+},{"../views/commentsView":12,"../views/postFormView":13,"../views/postView":15,"../views/postsListView":16,"backbone":"backbone"}],8:[function(require,module,exports){
+var
+  Backbone = require('backbone'),
+  _ = require('lodash');
+
+var utils = {
+  extend: function (Base, options) {
+    var View = Backbone.View.extend.apply(Base, _.rest(arguments));
+    View.prototype.events = _.extend({}, Base.prototype.events, options.events);
+    View.prototype.childViews = [];
+    return View;
+  },
+  dispose: function (baseView) {
+    _.each(baseView.childViews, function (childView) {
+      childView.dispose(true);
+    });
+
+    baseView.childViews = [];
+  }
+};
+
+module.exports = utils;
+},{"backbone":"backbone","lodash":"lodash"}],9:[function(require,module,exports){
+var
+  _ = require('lodash'),
+  Backbone = require('backbone'),
+  utils = require('../utils');
+
+var BaseView = Backbone.View.extend({
+  events: {},
+
+  dispose: function (notToRemove) {
+    
+    this.unbind();
+
+    if (_.isObject(this.model) && _.isFunction(this.render)) {
+      // Unbind reference to the model
+      this.model.unbind('change', this.render, this);
+    }
+    // Unbind reference to the parent view
+    // check for the parent view and unbind the relevant events
+    // and remove the current view from the chain
+    // this.parent.unbind( 'close:all', this.close, this);
+
+    // When we remove the parent view this way we could ask the child views:
+    // not to call remove because it is already removed
+    if (!notToRemove) {
+      // Remove this view
+      this.remove();
+    }
+    // Remove view from DOM
+    // Remove child views if exists
+    utils.dispose(this);
+
+    // Object.key(this);//['el', '$el', ...]
+
+    this.el = undefined;
+    this.$el = undefined;
+
+    // Delete the jQuery wrapped object variable
+    // delete this.$el;
+    // delete this.el;
+  }
+});
+
+module.exports = BaseView;
+},{"../utils":8,"backbone":"backbone","lodash":"lodash"}],10:[function(require,module,exports){
 var
   $ = require('jquery'),
   Backbone = require('backbone'),
-  Handlebars = require('handlebars');
+  Handlebars = require('handlebars'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var CommentFormView = Backbone.View.extend({
+var CommentFormView = utils.extend(BaseView, {
   tagName: 'form',
 
   initialize: function (options) {
@@ -196,13 +273,15 @@ var CommentFormView = Backbone.View.extend({
 });
 
 module.exports = CommentFormView;
-},{"backbone":"backbone","handlebars":"handlebars","jquery":"jquery"}],9:[function(require,module,exports){
+},{"../utils":8,"./baseView":9,"backbone":"backbone","handlebars":"handlebars","jquery":"jquery"}],11:[function(require,module,exports){
 var
   $ = require('jquery'),
   Backbone = require('backbone'),
-  Handlebars = require('handlebars');
+  Handlebars = require('handlebars'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var CommentView = Backbone.View.extend({
+var CommentView = utils.extend(BaseView, {
 
   template: Handlebars.compile($('#commentView').html()),
 
@@ -218,13 +297,17 @@ var CommentView = Backbone.View.extend({
 });
 
 module.exports = CommentView;
-},{"backbone":"backbone","handlebars":"handlebars","jquery":"jquery"}],10:[function(require,module,exports){
+},{"../utils":8,"./baseView":9,"backbone":"backbone","handlebars":"handlebars","jquery":"jquery"}],12:[function(require,module,exports){
 var
   Backbone = require('backbone'),
   CommentView = require('./commentView'),
-  CommentFormView = require('./commentFormView');
+  CommentFormView = require('./commentFormView'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var CommentsView = Backbone.View.extend({
+window._CommentView = CommentView;
+
+var CommentsView = utils.extend(BaseView, {
   initialize: function (options) {
     this.post = options.post;
     this.post.comments.on('add', this.renderComment, this);
@@ -233,37 +316,43 @@ var CommentsView = Backbone.View.extend({
   render: function () {
     this.$el.append('<h2> Comments </h2>');
 
-    this.$el.append(new CommentFormView({
+    this.commentFormView = new CommentFormView({
       post: this.post
-    }).render().el);
+    });
+
+    this.childViews.push(this.commentFormView);
+
+    this.$el.append(this.commentFormView.render().el);
 
     this.post.comments.fetch();
 
-    //return this;
+    return this;
   },
 
   renderComment: function (comment) {
-    this.$el.append(new CommentView({
+    var commentView = new CommentView({
       model: comment
-    }).render().el);
-
-    setTimeout(function(){
-      throw new Error('FixJS Error in setTimeout!', 10);
     });
+
+    this.childViews.push(commentView);
+
+    this.$el.append(commentView.render().el);
 
     return this;
   }
 });
 
 module.exports = CommentsView;
-},{"./commentFormView":8,"./commentView":9,"backbone":"backbone"}],11:[function(require,module,exports){
+},{"../utils":8,"./baseView":9,"./commentFormView":10,"./commentView":11,"backbone":"backbone"}],13:[function(require,module,exports){
 var
   $ = require('jquery'),
   Backbone = require('backbone'),
   Handlebars = require('handlebars'),
-  Post = require('../models/post');
+  Post = require('../models/post'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var PostFormView = Backbone.View.extend({
+var PostFormView = utils.extend(BaseView, {
   tagName: 'form',
   router: null,
   template: Handlebars.compile($('#postFormView').html()),
@@ -312,12 +401,14 @@ var PostFormView = Backbone.View.extend({
 });
 
 module.exports = PostFormView;
-},{"../models/post":5,"../routers/postRouter":7,"backbone":"backbone","handlebars":"handlebars","jquery":"jquery"}],12:[function(require,module,exports){
+},{"../models/post":5,"../routers/postRouter":7,"../utils":8,"./baseView":9,"backbone":"backbone","handlebars":"handlebars","jquery":"jquery"}],14:[function(require,module,exports){
 var
   Backbone = require('backbone'),
-  Handlebars = require('handlebars');
+  Handlebars = require('handlebars'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var PostListView = Backbone.View.extend({
+var PostListView = utils.extend(BaseView, {
   tagName: 'li',
 
   initialize: function (options) {
@@ -339,14 +430,16 @@ var PostListView = Backbone.View.extend({
 });
 
 module.exports = PostListView;
-},{"backbone":"backbone","handlebars":"handlebars"}],13:[function(require,module,exports){
+},{"../utils":8,"./baseView":9,"backbone":"backbone","handlebars":"handlebars"}],15:[function(require,module,exports){
 var
   $ = require('jquery'),
   Backbone = require('backbone'),
   Handlebars = require('handlebars'),
-  CommentsView = require('./commentsView');
+  CommentsView = require('./commentsView'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var PostView = Backbone.View.extend({
+var PostView = utils.extend(BaseView, {
 
   template: Handlebars.compile($('#postView').html()),
 
@@ -363,6 +456,8 @@ var PostView = Backbone.View.extend({
       post: post
     });
 
+    this.childViews.push(commentsView);
+
     this.$el.find('>.comments').html(commentsView.render().el);
 
     return this;
@@ -370,19 +465,22 @@ var PostView = Backbone.View.extend({
 });
 
 module.exports = PostView;
-},{"./commentsView":10,"backbone":"backbone","handlebars":"handlebars","jquery":"jquery"}],14:[function(require,module,exports){
+},{"../utils":8,"./baseView":9,"./commentsView":12,"backbone":"backbone","handlebars":"handlebars","jquery":"jquery"}],16:[function(require,module,exports){
 var
   $ = require('jquery'),
   _ = require('lodash'),
   Backbone = require('backbone'),
   Handlebars = require('handlebars'),
-  PostListView = require('./postListView');
+  PostListView = require('./postListView'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var PostsListView = Backbone.View.extend({
+var PostsListView = utils.extend(BaseView, {
   events: {},
   template: Handlebars.compile($('#index').html()),
   render: function () {
     this.$el.html(this.template());
+
 
     var ul = this.$el.find('ul');
     
@@ -413,12 +511,14 @@ var PostsListView = Backbone.View.extend({
     // });
     // this.$el.find('ul').html(htmlStr);
 
+    ul = undefined;
+
     return this;
   }
 });
 
 module.exports = PostsListView;
-},{"./postListView":12,"backbone":"backbone","handlebars":"handlebars","jquery":"jquery","lodash":"lodash"}],15:[function(require,module,exports){
+},{"../utils":8,"./baseView":9,"./postListView":14,"backbone":"backbone","handlebars":"handlebars","jquery":"jquery","lodash":"lodash"}],17:[function(require,module,exports){
 //     Underscore.js 1.8.2
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -3566,7 +3666,7 @@ module.exports = PostsListView;
 
 }));
 
-},{"underscore":15}],"handlebars":[function(require,module,exports){
+},{"underscore":17}],"handlebars":[function(require,module,exports){
 /*!
 
  handlebars v2.0.0

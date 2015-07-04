@@ -5,7 +5,6 @@ module.exports = function (app) {
 
   app.get("/posts", function (req, res) {
     blogDB.posts(function (err, results) {
-      console.log('Hello world! this is your data:', results);
       res.json(results);
     });
   });

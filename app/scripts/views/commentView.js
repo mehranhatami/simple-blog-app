@@ -1,9 +1,11 @@
 var
   $ = require('jquery'),
   Backbone = require('backbone'),
-  Handlebars = require('handlebars');
+  Handlebars = require('handlebars'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var CommentView = Backbone.View.extend({
+var CommentView = utils.extend(BaseView, {
 
   template: Handlebars.compile($('#commentView').html()),
 

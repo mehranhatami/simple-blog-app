@@ -2,9 +2,11 @@ var
   $ = require('jquery'),
   Backbone = require('backbone'),
   Handlebars = require('handlebars'),
-  Post = require('../models/post');
+  Post = require('../models/post'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var PostFormView = Backbone.View.extend({
+var PostFormView = utils.extend(BaseView, {
   tagName: 'form',
   router: null,
   template: Handlebars.compile($('#postFormView').html()),

@@ -1,9 +1,11 @@
 var
   $ = require('jquery'),
   Backbone = require('backbone'),
-  Handlebars = require('handlebars');
+  Handlebars = require('handlebars'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var CommentFormView = Backbone.View.extend({
+var CommentFormView = utils.extend(BaseView, {
   tagName: 'form',
 
   initialize: function (options) {

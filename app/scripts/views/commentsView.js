@@ -1,9 +1,13 @@
 var
   Backbone = require('backbone'),
   CommentView = require('./commentView'),
-  CommentFormView = require('./commentFormView');
+  CommentFormView = require('./commentFormView'),
+  BaseView = require('./baseView'),
+  utils = require('../utils');
 
-var CommentsView = Backbone.View.extend({
+window._CommentView = CommentView;
+
+var CommentsView = utils.extend(BaseView, {
   initialize: function (options) {
     this.post = options.post;
     this.post.comments.on('add', this.renderComment, this);
@@ -12,9 +16,13 @@ var CommentsView = Backbone.View.extend({
   render: function () {
     this.$el.append('<h2> Comments </h2>');
 
-    this.$el.append(new CommentFormView({
+    this.commentFormView = new CommentFormView({
       post: this.post
-    }).render().el);
+    });
+
+    this.childViews.push(this.commentFormView);
+
+    this.$el.append(this.commentFormView.render().el);
 
     this.post.comments.fetch();
 
@@ -22,9 +30,13 @@ var CommentsView = Backbone.View.extend({
   },
 
   renderComment: function (comment) {
-    this.$el.append(new CommentView({
+    var commentView = new CommentView({
       model: comment
-    }).render().el);
+    });
+
+    this.childViews.push(commentView);
+
+    this.$el.append(commentView.render().el);
 
     return this;
   }

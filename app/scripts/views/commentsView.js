@@ -5,8 +5,6 @@ var
   BaseView = require('./baseView'),
   utils = require('../utils');
 
-window._CommentView = CommentView;
-
 var CommentsView = utils.extend(BaseView, {
   initialize: function (options) {
     this.post = options.post;

@@ -107,11 +107,6 @@ var
   CommentsView = require('../views/commentsView'),
   PostsListView = require('../views/postsListView');
 
-window._PostView = PostView;
-window._PostFormView = PostFormView;
-window._CommentsView = CommentsView;
-window._PostsListView = PostsListView;
-
 var PostRouter = Backbone.Router.extend({
   initialize: function (options) {
     this.posts = options.posts;
@@ -152,9 +147,6 @@ PostRouter.new = function instantiate(options) {
 
   // arguments.callee.instance = postRouter;
   instantiate.instance = postRouter;
-  
-  window._postRouter = postRouter;
-
   return postRouter;
 };
 
@@ -304,8 +296,6 @@ var
   CommentFormView = require('./commentFormView'),
   BaseView = require('./baseView'),
   utils = require('../utils');
-
-window._CommentView = CommentView;
 
 var CommentsView = utils.extend(BaseView, {
   initialize: function (options) {

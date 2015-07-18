@@ -1,6 +1,6 @@
 define([
   'backbone',
-  'models/comment'
+  '../models/comment'
 ], function (Backbone, Comment) {
   'use strict';
 

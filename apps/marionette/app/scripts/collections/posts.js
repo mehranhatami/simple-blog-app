@@ -1,6 +1,6 @@
 define([
   'backbone',
-  'models/post'
+  '../models/post'
 ], function (Backbone, Post) {
   'use strict';
 

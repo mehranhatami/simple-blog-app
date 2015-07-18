@@ -7,19 +7,10 @@ define([
 ], function (Backbone, PostView, PostFormView, CommentsView, PostsView) {
   'use strict';
 
-
-
-  var
-    Backbone = require('backbone'),
-    PostView = require('../views/postView'),
-    PostFormView = require('../views/postFormView'),
-    CommentsView = require('../views/commentsView'),
-    PostsListView = require('../views/postsListView');
-
   var PostRouter = Backbone.Router.extend({
     initialize: function (options) {
       this.posts = options.posts;
-      this.main = options.main;
+      this.root = options.root;
     },
     routes: {
       '': 'index',
@@ -27,11 +18,10 @@ define([
       'posts/:id': 'singlePost'
     },
     index: function () {
-      this.postsListView = new PostsListView({
+      this.postsView = new PostsView({
         collection: this.posts
       });
-
-      this.main.html(this.postsListView.render().el);
+      this.root.getRegion('content').show(this.postsView);
     },
     singlePost: function (id) {
       var post = this.posts.get(id);
@@ -40,14 +30,14 @@ define([
         model: post
       });
 
-      this.main.html(this.postView.render().el);
+      this.root.getRegion('content').show(this.postView);
     },
     newPost: function () {
       this.postFormView = new PostFormView({
         posts: this.posts
       });
 
-      this.main.html(this.postFormView.render().el);
+      this.root.getRegion('content').show(this.postFormView);
     }
   });
 
@@ -59,8 +49,5 @@ define([
     return postRouter;
   };
 
-  return Backbone.Router.extend({
-    /* Backbone routes hash */
-    routes: {}
-  });
+  return PostRouter;
 });

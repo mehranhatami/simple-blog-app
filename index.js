@@ -20,11 +20,11 @@ app.use(express.static('path/to/png/gif/and/js/files'));
 app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
 
-app.set('views', __dirname + '/app');
+app.set('views', __dirname + '/apps/marionette/app');
 
 routes(app);
 
-app.use(express.static(path.join(__dirname, 'app')));
+app.use(express.static(path.join(__dirname, 'apps/marionette/app')));
 
 error(app);
 

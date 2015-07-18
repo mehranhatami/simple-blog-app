@@ -1,11 +1,12 @@
 define([
+    'backbone',
     'backbone.marionette',
     'communicator',
     'routers/post-router',
     'views/index-view'
   ],
 
-  function (Marionette, Communicator, PostRouter, IndexView) {
+  function (Backbone, Marionette, Communicator, PostRouter, IndexView) {
     'use strict';
 
     var App = new Marionette.Application();
@@ -16,24 +17,27 @@ define([
     });
 
     /* Add initializers here */
-    // App.addInitializer(function () {
-    //   document.body.innerHTML = indexTmpl({
-    //     success: "CONGRATS!"
-    //   });
-    //   Communicator.mediator.trigger("APP:START");
-    // });
-
-    App.addInitializer(function (options) {
-      var indexView = new IndexView(options);
-      App.container.show(indexView);
-      Backbone.history.start();
+    App.addInitializer(function () {
+      //Backbone.history.start();
       Communicator.mediator.trigger("APP:START");
     });
 
     App.addInitializer(function (options) {
-      new PostRouter(options);
-      Backbone.history.start();
+      App.root = new IndexView(options);
+      App.container.show(App.root);
+
+      options.root = App.root;
+
+      App.postRouter = new PostRouter(options);
+      App.postRouter.navigate('/', {
+        trigger: true
+      });
+      // Backbone.history.start();
+      // Backbone.history.start();
+      // Communicator.mediator.trigger("APP:START");
     });
+
+
 
     return App;
   });

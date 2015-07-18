@@ -1,17 +1,24 @@
 require([
-    'app'
-  ],
-  function (App) {
-    'use strict';
+  'backbone',
+  'app',
+], function (Backbone, App) {
+  'use strict';
 
-    $.getJSON('/posts')
-      .then(function (data) {
-        return {
-          posts: data
-        }
-      })
-      .then(App.start)
-      .fail(function (error) {
-        console.error('Something wrong with the database!', error);
-      });
+  window.App = App;
+
+  Backbone.history.start({
+    pushState: true
   });
+
+  $.getJSON('/posts')
+    .then(function (data) {
+      App.start({
+        posts: data
+      });
+    })
+    .fail(function (error) {
+      console.error('Something wrong with the database!', error);
+    });
+
+  // App.start();
+});

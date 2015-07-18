@@ -1,6 +1,6 @@
 define([
     'backbone.marionette',
-    'views/item/comment-view',
+    'views/comment-view',
     'hbs!tmpl/comments-view'
   ],
   function (Marionette, CommentView, CommentsViewTmpl) {

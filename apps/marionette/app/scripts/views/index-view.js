@@ -25,7 +25,9 @@ define([
       ui: {},
 
       /* Ui events hash */
-      events: {},
+      events: {
+        'click a': 'handleClick'
+      },
 
       childEvents: {
         render: function (childView) {
@@ -34,6 +36,13 @@ define([
       },
 
       /* on render callback */
-      onRender: function () { }
+      onRender: function () {},
+
+      handleClick: function (e) {
+        e.preventDefault();
+        App.postRouter.navigate($(e.currentTarget).attr('href'), {
+          trigger: true
+        });
+      }
     });
   });

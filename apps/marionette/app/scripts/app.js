@@ -16,12 +16,6 @@ define([
       container: "#container"
     });
 
-    /* Add initializers here */
-    App.addInitializer(function () {
-      //Backbone.history.start();
-      Communicator.mediator.trigger("APP:START");
-    });
-
     App.addInitializer(function (options) {
       App.root = new IndexView(options);
       App.container.show(App.root);
@@ -29,12 +23,10 @@ define([
       options.root = App.root;
 
       App.postRouter = new PostRouter(options);
-      App.postRouter.navigate('/', {
-        trigger: true
-      });
-      // Backbone.history.start();
-      // Backbone.history.start();
-      // Communicator.mediator.trigger("APP:START");
+
+      Backbone.history.start();
+
+      Communicator.mediator.trigger("APP:START");
     });
 
 

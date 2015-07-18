@@ -9,7 +9,7 @@ define([
     idAttribute: 'postId',
     urlRoot: '/posts',
     initialize: function () {
-      this.comments = new Comments([], {
+      this.comments = new Comments({
         post: this
       });
     }

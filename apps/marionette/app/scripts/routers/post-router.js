@@ -1,10 +1,11 @@
 define([
   'backbone',
   '../views/post-view',
+  '../views/post-full-view',
   '../views/post-form-view',
   '../views/comments-view',
   '../views/posts-view'
-], function (Backbone, PostView, PostFormView, CommentsView, PostsView) {
+], function (Backbone, PostView, PostFullView, PostFormView, CommentsView, PostsView) {
   'use strict';
 
   var PostRouter = Backbone.Router.extend({
@@ -26,11 +27,11 @@ define([
     singlePost: function (id) {
       var post = this.posts.get(id);
 
-      this.postView = new PostView({
+      this.postFullView = new PostFullView({
         model: post
       });
 
-      this.root.getRegion('content').show(this.postView);
+      this.root.getRegion('content').show(this.postFullView);
     },
     newPost: function () {
       this.postFormView = new PostFormView({

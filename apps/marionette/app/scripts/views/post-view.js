@@ -22,24 +22,7 @@ define([
 
     /* on render callback */
     onRender: function () {
-      console.log(25, 'this.model:', this.model.get('name'));
-
-
-    },
-
-    oldRender: function () {
-      var post = this.model,
-        model = post.toJSON();
-
-      model.pubDate = new Date(Date.parse(model.pubDate)).toDateString();
-
-      this.root.getRegion('content').show(this);
-
-      var commentsView = new CommentsView({
-        post: post
-      });
-
-      App.root.getRegion('comments').show(commentsView);
+      console.log(25, 'this.model.title:', this.model.get('title'));
     }
   });
 

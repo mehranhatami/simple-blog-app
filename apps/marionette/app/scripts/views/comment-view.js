@@ -21,7 +21,11 @@ define([
     events: {},
 
     /* on render callback */
-    onRender: function () {}
+    onRender: function () {
+      var model = this.model.toJSON(),
+        date = new Date(Date.parse(model.date)).toDateString();
+      this.model.set('date', date);
+    }
   });
 
 });

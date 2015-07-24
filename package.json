@@ -4,7 +4,8 @@
   "description": "A backbone sample app",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "CURRENT_APP=marionette node index",
+    "install": "bower install && cd apps/marionette && bower install && cd ../backbone && bower install"
   },
   "author": "",
   "license": "ISC",

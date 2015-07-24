@@ -5,7 +5,12 @@ var express = require('express'),
   bodyParser = require('body-parser'),
   error = require('./error'),
   routes = require('./routes'),
-  app = express();
+  app = express(),
+  currentApp = 'backbone';
+
+if (process.env.CURRENT_APP) {
+  currentApp = process.env.CURRENT_APP;
+}
 
 app.set('port', (process.env.PORT || 4000));
 
@@ -20,14 +25,14 @@ app.use(express.static('path/to/png/gif/and/js/files'));
 app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
 
-app.set('views', __dirname + '/apps/marionette/app');
+app.set('views', __dirname + '/apps/' + currentApp + '/app');
 
 routes(app);
 
-app.use(express.static(path.join(__dirname, 'apps/marionette/app')));
+app.use(express.static(path.join(__dirname, 'apps/' + currentApp + '/app')));
 
 error(app);
 
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), function () {
   console.log('Node app is running on port', app.get('port'));
 });

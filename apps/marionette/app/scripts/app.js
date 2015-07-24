@@ -26,7 +26,7 @@ define([
 
       Backbone.history.start();
 
-      Communicator.mediator.trigger("APP:START");
+      Communicator.mediator.trigger('APP:START');
     });
 
 

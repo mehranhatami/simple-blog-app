@@ -1,8 +1,9 @@
 define([
   'backbone.marionette',
+  'communicator',
   '../models/post',
   'hbs!tmpl/comment-form-view'
-], function (Marionette, Post, CommentFormViewTmpl) {
+], function (Marionette, Communicator, Post, CommentFormViewTmpl) {
   'use strict';
 
   /* Return a ItemView class definition */
@@ -39,6 +40,8 @@ define([
         };
 
       this.post.comments.create(commentAttrs);
+
+      Communicator.mediator.trigger('COMMENT:CREATED', this.post, commentAttrs);
 
       this.el.reset();
 

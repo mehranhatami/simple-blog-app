@@ -1,8 +1,9 @@
 define([
   'backbone.marionette',
+  'communicator',
   '../models/post',
   'hbs!tmpl/post-form-view'
-], function (Marionette, Post, PostFormViewTmpl) {
+], function (Marionette, Communicator, Post, PostFormViewTmpl) {
   'use strict';
 
   /* Return a ItemView class definition */
@@ -41,6 +42,8 @@ define([
       //post.save();
 
       this.posts.create(postAttrs);
+
+      Communicator.mediator.trigger('POST:CREATED');
 
       App.postRouter.navigate('/', {
         trigger: true

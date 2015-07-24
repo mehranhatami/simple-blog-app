@@ -2,10 +2,10 @@ define([
     'backbone',
     'backbone.marionette'
   ],
-  function (Backbone) {
+  function (Backbone, Marionette) {
     'use strict';
 
-    var Communicator = Backbone.Marionette.Controller.extend({
+    var Communicator = Marionette.Controller.extend({
       initialize: function (options) {
         console.log("initialize a Communicator");
 
